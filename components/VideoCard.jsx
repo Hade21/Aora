@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import { Video, ResizeMode } from "expo-av";
 
 import { icons } from "../constants";
 
@@ -11,7 +12,6 @@ const VideoCard = ({
     creator: { username, avatar },
   },
 }) => {
-  console.log("🚀 ~ thumbnail:", thumbnail);
   const [play, setPlay] = useState(false);
 
   return (
@@ -45,7 +45,18 @@ const VideoCard = ({
         </View>
       </View>
       {play ? (
-        <Text>Playing</Text>
+        <Video
+          source={{ uri: video }}
+          className="w-full h-60 rounded-xl mt-3 bg-white/10"
+          resizeMode={ResizeMode.CONTAIN}
+          useNativeControls
+          shouldPlay
+          onPlaybackStatusUpdate={(status) => {
+            if (status.didJustFinished) {
+              setPlay(false);
+            }
+          }}
+        />
       ) : (
         <TouchableOpacity
           className="w-full h-60 rounded-xl mt-3 relative justify-center items-center"

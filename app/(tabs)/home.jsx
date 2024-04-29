@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { getAllPost } from "../../lib/appWrite";
+import { getAllPost, getLatestPost } from "../../lib/appWrite";
 import useAppwrite from "../../lib/useAppwrite";
 
 import { images } from "../../constants";
@@ -21,6 +21,7 @@ import VideoCard from "../../components/VideoCard";
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const { data: posts, refetch } = useAppwrite(getAllPost);
+  const { data: latestPosts } = useAppwrite(getLatestPost);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -57,7 +58,7 @@ const Home = () => {
               <Text className="text-gray-100 text-lg font-pregular mb-3">
                 Latest Videos
               </Text>
-              <Trending posts={[{ id: 1 }, { id: 2 }, { id: 3 }]} />
+              <Trending posts={latestPosts ?? []} />
             </View>
           </View>
         )}
