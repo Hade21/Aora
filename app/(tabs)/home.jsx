@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { getAllPost, getLatestPost } from "../../lib/appWrite";
 import useAppwrite from "../../lib/useAppwrite";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 import { images } from "../../constants";
 import SearchInput from "../../components/SearchInput";
@@ -22,12 +23,14 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const { data: posts, refetch } = useAppwrite(getAllPost);
   const { data: latestPosts } = useAppwrite(getLatestPost);
+  const { user } = useGlobalContext();
 
   const onRefresh = async () => {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
   };
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
@@ -42,7 +45,7 @@ const Home = () => {
                   Welcome Back
                 </Text>
                 <Text className="text-2xl font-psemibold text-white">
-                  Hade21
+                  {user?.username}
                 </Text>
               </View>
               <View className="mt-1.5">
