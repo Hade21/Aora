@@ -1,11 +1,4 @@
-import {
-  Alert,
-  Image,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Image, TextInput, TouchableOpacity, View } from "react-native";
 import { router, usePathname } from "expo-router";
 import { useState } from "react";
 

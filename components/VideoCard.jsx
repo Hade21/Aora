@@ -1,18 +1,42 @@
 import { useState } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
 import { Video, ResizeMode } from "expo-av";
 
 import { icons } from "../constants";
+import { updatePost } from "../lib/appWrite";
+import { useGlobalContext } from "../context/GlobalProvider";
 
 const VideoCard = ({
-  video: {
-    title,
-    thumbnail,
-    video,
-    creator: { username, avatar },
-  },
+  video: { title, thumbnail, video, creator, prompt, $id },
 }) => {
   const [play, setPlay] = useState(false);
+  const { user } = useGlobalContext();
+  const [bookmarked, setBookmarked] = useState(null);
+
+  const addBookmark = async () => {
+    if (!title || !prompt || !video || !thumbnail || !creator) {
+      Alert.alert("No Posts found!");
+    }
+
+    if (!bookmarked) setBookmarked(user.$id);
+    else setBookmarked(null);
+
+    try {
+      const post = {
+        postId: $id,
+        title,
+        video,
+        thumbnail,
+        prompt,
+        creator,
+        bookmarked,
+      };
+
+      await updatePost(post);
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    }
+  };
 
   return (
     <View className="flex-col items-center px-4 mb-14">
@@ -20,7 +44,7 @@ const VideoCard = ({
         <View className="justify-center items-center flex-row flex-1">
           <View className="w-[46px] h-[46px] rounded-lg border border-secondary justify-center items-center p-0.5">
             <Image
-              source={{ uri: avatar }}
+              source={{ uri: creator.avatar }}
               className="w-full h-full rounded-lg"
               resizeMode="cover"
             />
@@ -36,13 +60,18 @@ const VideoCard = ({
               className="text-sm text-gray-100 font-pregular"
               numberOfLines={1}
             >
-              {username}
+              {creator.username}
             </Text>
           </View>
         </View>
-        <View className="pt-2">
-          <Image source={icons.menu} className="w-5 h-5" resizeMode="contain" />
-        </View>
+        <TouchableOpacity className="pt-2" onPress={addBookmark}>
+          <Image
+            source={icons.bookmark}
+            className="w-5 h-5"
+            resizeMode="contain"
+            tintColor={bookmarked ? "#FFA001" : "#CDCDE0"}
+          />
+        </TouchableOpacity>
       </View>
       {play ? (
         <Video
